@@ -25,6 +25,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "rootDir": "./src",
 
     /* Emit */
     "outDir": "./dist",
@@ -33,7 +34,7 @@
     "removeComments": true,
 
     /* Path Aliases */
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }

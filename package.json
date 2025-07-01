@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A Hono REST API for managing users and courses.",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
