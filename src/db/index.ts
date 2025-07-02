@@ -3,7 +3,7 @@ import { createClient } from '@libsql/client';
 import { env } from '@/config/env';
 import * as schema from '@/db/schema';
 
-const sqliteClient = createClient({
+export const sqliteClient = createClient({
   url: env.DB_FILE_NAME,
 });
 
