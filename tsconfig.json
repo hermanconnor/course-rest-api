@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     /* Language and Environment */
-    "moduleResolution": "nodenext", // Recommended for modern bundlers like Vite, esbuild, or even Node.js/Bun
+    "moduleResolution": "bundler",
     "esModuleInterop": true, // Enables better interoperability between CommonJS and ES Modules
     "forceConsistentCasingInFileNames": true, // Ensures consistent casing in import paths
     "target": "ESNext",
-    "module": "NodeNext",
+    "module": "ESNext",
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": ["node"],
