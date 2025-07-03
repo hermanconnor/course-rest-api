@@ -56,4 +56,68 @@ export class UserService {
 
     return user[0];
   }
+
+  static async updateUser(
+    id: number,
+    userData: Partial<UserInput>,
+  ): Promise<UserType | undefined> {
+    const { emailAddress, password, firstName, lastName } = userData;
+    const updateFields: Partial<UserType> = {};
+
+    const existingUser = await UserService.getUserById(id);
+    if (!existingUser) {
+      throw new AppError('User not found', 404);
+    }
+
+    if (emailAddress && emailAddress !== existingUser.emailAddress) {
+      const existingUserByEmail = await db
+        .select()
+        .from(users)
+        .where(eq(users.emailAddress, emailAddress))
+        .limit(1);
+
+      if (existingUserByEmail.length > 0) {
+        throw new AppError(
+          'Email address already in use by another account',
+          409,
+        );
+      }
+
+      updateFields.emailAddress = emailAddress;
+    }
+
+    if (password) {
+      updateFields.password = await bcrypt.hash(password, 10);
+    }
+
+    if (firstName) {
+      updateFields.firstName = firstName;
+    }
+    if (lastName) {
+      updateFields.lastName = lastName;
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateFields)
+      .where(eq(users.id, id))
+      .returning();
+
+    return updatedUser;
+  }
+
+  static async deleteUser(id: number): Promise<UserType | undefined> {
+    const existingUser = await UserService.getUserById(id);
+
+    if (!existingUser) {
+      throw new AppError('User not found', 404);
+    }
+
+    const [deletedUser] = await db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning();
+
+    return deletedUser;
+  }
 }
