@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
 import { CourseService } from '@/services/courseService';
 import AppError from '@/utils/AppError';
 import { authenticateUser } from '@/middleware/authenticateUser';
-import { courseSchema, courseUpdateSchema } from '@/utils/validationSchemas';
+import {
+  courseUpdateSchema,
+  type CourseInput,
+} from '@/utils/validationSchemas';
 
 const app = new Hono();
 
@@ -53,82 +55,77 @@ app.get('/courses/:id', async (c) => {
 
 // POST /courses
 // Creates a new course
-app.post(
-  '/courses',
-  authenticateUser,
-  zValidator('json', courseSchema),
-  async (c) => {
-    const courseData = c.req.valid('json');
-    const authenticatedUser = c.get('currentUser');
+app.post('/courses', authenticateUser, async (c) => {
+  const authenticatedUser = c.get('currentUser');
 
-    if (!authenticatedUser || !authenticatedUser.id) {
-      throw new AppError('Authentication error: User ID not found', 401);
-    }
+  if (!authenticatedUser || !authenticatedUser.id) {
+    throw new AppError('Authentication error: User ID not found', 401);
+  }
 
-    const newCourseData = { ...courseData, userId: authenticatedUser.id };
+  const courseData = await c.req.json();
 
-    const newCourse = await CourseService.createCourse(newCourseData);
+  const newCourseData: CourseInput = {
+    ...courseData,
+    userId: authenticatedUser.id,
+  };
 
-    c.header('Location', `/api/courses/${newCourse.id}`);
+  const newCourse = await CourseService.createCourse(newCourseData);
 
-    return c.json(
-      {
-        status: 'success',
-        message: 'Course created successfully',
-        data: {
-          course: newCourse,
-        },
+  c.header('Location', `/api/courses/${newCourse.id}`);
+
+  return c.json(
+    {
+      status: 'success',
+      message: 'Course created successfully',
+      data: {
+        course: newCourse,
       },
-      201,
-    );
-  },
-);
+    },
+    201,
+  );
+});
 
 // PUT /courses/:id
 // Updates a specific course by ID
-app.put(
-  '/courses/:id',
-  authenticateUser,
-  zValidator('json', courseUpdateSchema),
-  async (c) => {
-    const id = Number(c.req.param('id'));
+app.put('/courses/:id', authenticateUser, async (c) => {
+  const id = Number(c.req.param('id'));
 
-    if (isNaN(id)) {
-      throw new AppError('Invalid course ID format', 400);
-    }
+  if (isNaN(id)) {
+    throw new AppError('Invalid course ID format', 400);
+  }
 
-    const updateData = c.req.valid('json');
+  const body = await c.req.json();
+  const updateData = courseUpdateSchema.parse(body);
 
-    const existingCourse = await CourseService.getCourseById(id);
+  const existingCourse = await CourseService.getCourseById(id);
 
-    if (!existingCourse) {
-      throw new AppError('Course Not Found', 404);
-    }
+  if (!existingCourse) {
+    throw new AppError('Course Not Found', 404);
+  }
 
-    const authenticatedUser = c.get('currentUser');
+  const authenticatedUser = c.get('currentUser');
 
-    if (!authenticateUser || existingCourse.userId !== authenticatedUser.id) {
-      throw new AppError('Forbidden: You do not own this course', 403);
-    }
+  if (!authenticateUser || existingCourse.userId !== authenticatedUser.id) {
+    throw new AppError('Forbidden: You do not own this course', 403);
+  }
 
-    const updatedCourse = await CourseService.updateCourse(id, updateData);
+  const updatedCourse = await CourseService.updateCourse(id, updateData);
 
-    if (!updatedCourse) {
-      throw new AppError('Failed to update course', 500);
-    }
+  if (!updatedCourse) {
+    throw new AppError('Failed to update course', 500);
+  }
 
-    return c.json(
-      {
-        status: 'success',
-        message: 'Course updated successfully',
-        data: {
-          course: updatedCourse,
-        },
+  return c.json(
+    {
+      status: 'success',
+      message: 'Course updated successfully',
+      data: {
+        course: updatedCourse,
       },
-      200,
-    );
-  },
-);
+    },
+    200,
+  );
+});
 
 // DELETE /courses/:id
 // Deletes a specific course by ID
