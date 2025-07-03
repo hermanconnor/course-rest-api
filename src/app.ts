@@ -1,12 +1,13 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
-import userRoutes from '@/routes/users';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { ZodError } from 'zod';
 import AppError from './utils/AppError';
 import pinoLogger from './utils/logger';
 import { env } from './config/env';
 import { isError } from './utils/isError';
+import userRoutes from '@/routes/users';
+import courseRoutes from '@/routes/courses';
 
 // SQLite doesn't always give separate base codes for unique/foreign key.
 // It often uses the generic SQLITE_CONSTRAINT (19) and puts specifics in the message.
@@ -23,6 +24,7 @@ app.get('/', (c) => {
 });
 
 app.route('/api', userRoutes);
+app.route('/api', courseRoutes);
 
 // ERROR HANDLER
 app.onError((err, c) => {

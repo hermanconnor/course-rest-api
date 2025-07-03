@@ -1,6 +1,4 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
-
 import { authenticateUser } from '@/middleware/authenticateUser';
 import { UserService } from '@/services/userService';
 import { userSchema } from '@/utils/validationSchemas';
@@ -29,8 +27,10 @@ app.get('/users', authenticateUser, async (c) => {
   });
 });
 
-app.post('/users', zValidator('json', userSchema), async (c) => {
-  const userData = c.req.valid('json');
+app.post('/users', async (c) => {
+  const body = await c.req.json();
+
+  const userData = userSchema.parse(body);
 
   const newUser = await UserService.createUser(userData);
 

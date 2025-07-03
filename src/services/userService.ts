@@ -3,12 +3,11 @@ import bcrypt from 'bcrypt';
 import AppError from '@/utils/AppError';
 import { db } from '@/db';
 import { users, type UserType } from '@/db/schema';
-import { userSchema, type UserInput } from '@/utils/validationSchemas';
+import { type UserInput } from '@/utils/validationSchemas';
 
 export class UserService {
   static async createUser(userData: UserInput): Promise<UserType> {
-    const { emailAddress, password, firstName, lastName } =
-      userSchema.parse(userData);
+    const { emailAddress, password, firstName, lastName } = userData;
 
     const existingUser = await db
       .select()
