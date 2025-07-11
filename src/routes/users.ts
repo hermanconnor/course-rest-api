@@ -16,6 +16,7 @@ app.get('/users', authenticateUser, async (c) => {
 
   return c.json({
     status: 'success',
+    success: true,
     message: 'Authenticated user fetched successfully',
     data: {
       user: {
@@ -40,6 +41,7 @@ app.post('/users', async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'User registered successfully',
       data: {
         user: {
@@ -85,6 +87,7 @@ app.put('/users/:id', authenticateUser, async (c) => {
     {
       status: 'success',
       message: 'User updated successfully',
+      success: true,
       data: {
         user: {
           id: updatedUser.id,
@@ -124,6 +127,7 @@ app.delete('/users/:id', authenticateUser, async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'User deleted successfully',
       data: {},
     },

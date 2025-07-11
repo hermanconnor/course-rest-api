@@ -110,6 +110,7 @@ app.onError((err, c) => {
   return c.json(
     {
       status,
+      success: false,
       message,
       ...(errors && { errors: errors }),
       ...(env.NODE_ENV === 'development' && {

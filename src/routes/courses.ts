@@ -17,6 +17,7 @@ app.get('/courses', async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'Courses fetched successfully',
       data: {
         courses,
@@ -44,6 +45,7 @@ app.get('/courses/:id', async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'Course fetched successfully',
       data: {
         course,
@@ -76,6 +78,7 @@ app.post('/courses', authenticateUser, async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'Course created successfully',
       data: {
         course: newCourse,
@@ -118,6 +121,7 @@ app.put('/courses/:id', authenticateUser, async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'Course updated successfully',
       data: {
         course: updatedCourse,
@@ -156,6 +160,7 @@ app.delete('/courses/:id', authenticateUser, async (c) => {
   return c.json(
     {
       status: 'success',
+      success: true,
       message: 'Course deleted successfully',
       data: {},
     },
