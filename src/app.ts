@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
 import { ZodError } from 'zod';
@@ -16,6 +17,7 @@ const SQLITE_CONSTRAINT = 19;
 
 const app = new Hono();
 
+app.use('*', cors());
 app.use('*', logger());
 
 // ADD ROUTES
